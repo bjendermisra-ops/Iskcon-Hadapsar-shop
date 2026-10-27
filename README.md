@@ -13,7 +13,7 @@ Serve this folder over HTTP (`python3 -m http.server 8080`) and open localhost:8
 - `assets/`: generated representative category images, compressed as WebP. Replace with actual product photos when available. Set each product's `image` to the filename without `.webp`.
 - `styles.css`: colours, spacing and responsive layout.
 
-The current catalog is illustrative, not a stock declaration. Books share representative scripture artwork, and accessories share category imagery. Generated images do not depict actual book editions or specific shop packaging. All prices and language options are unverified placeholders chosen for preview. Confirm real prices, variants and inventory before promoting the shop. Hindi button currently translates selected homepage headings only; checkout and catalog remain in English.
+The current catalog is illustrative, not a stock declaration. Books share representative scripture artwork, and some variants share representative product imagery. Generated images do not depict actual book editions or specific shop packaging. All prices and language options are unverified placeholders chosen for preview. Confirm real prices, variants and inventory before promoting the shop. Interface and checkout are in English.
 
 ## Order behaviour
 
@@ -31,4 +31,4 @@ For GitHub Pages: repository Settings → Pages → Deploy from a branch → mai
 
 ## Assets
 
-Hero, scripture, mala, puja and ghee artwork were generated for this prototype with the built-in image-generation tool. Prompt direction: photorealistic cream-linen ecommerce product photography, warm light, restrained forest-green/gold accents; representative products without certification claims. WebP derivatives preserve the full composition. Use your actual verified product images before treating this as a precise visual catalog.
+Hero, scripture, mala, puja, accessory and ghee artwork were generated for this prototype with the built-in image-generation tool. Prompt direction: photorealistic cream-linen ecommerce product photography, warm light, restrained forest-green/gold accents; representative products without certification claims. WebP derivatives preserve the full composition. Use your actual verified product images before treating this as a precise visual catalog.

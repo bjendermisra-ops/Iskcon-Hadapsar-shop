@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {products} from '../catalog.js';
+import {config} from '../config.js';
+import {normalizeCart,cartLines,orderMessage} from '../core.js';
+const cart=[{product:'ghee',variant:'0',quantity:2},{product:'ghee',variant:'1',quantity:1}];
+const customer={name:'Test Customer',phone:'9000000000',mode:'pickup'};
+test('ghee weights and separate variant totals',()=>{assert.deepEqual(products.find(p=>p.id==='ghee').variants.map(v=>v.label),['500 g','1 kg']);assert.equal(cartLines(cart,products).reduce((n,r)=>n+r.total,0),3350);});
+test('pickup needs no address and has zero delivery fee',()=>{const text=orderMessage(cart,products,customer,config);assert.match(text,/Temple pickup: ₹0/);assert.match(text,/Estimated total: ₹3350/);assert.doesNotMatch(text,/Address:/);});
+test('delivery stays unquoted, including temple PIN',()=>{const text=orderMessage(cart,products,{...customer,mode:'delivery',address:'Test address',city:'Pune',pin:'411028'},config);assert.match(text,/₹3350 \+ delivery/);assert.match(text,/charge to be confirmed/);assert.doesNotMatch(text,/Temple pickup: ₹0/);});
+test('missing address and invalid phone block enquiry',()=>{assert.throws(()=>orderMessage(cart,products,{...customer,mode:'delivery'},config));assert.throws(()=>orderMessage(cart,products,{...customer,phone:'123'},config));assert.throws(()=>orderMessage([],products,customer,config));});
+test('stale or corrupt saved cart cannot inject prices or invalid products',()=>{const rows=normalizeCart([null,{product:'missing',variant:'0',quantity:1},{product:'ghee',variant:'missing',quantity:2},{product:'ghee',variant:'0',quantity:3,price:1}],products);assert.equal(rows.length,1);assert.equal(cartLines(rows,products)[0].total,2550);assert.deepEqual(normalizeCart({},products),[]);});
+test('duplicates merge, quantities capped, malformed quantities removed',()=>{assert.deepEqual(normalizeCart([{product:'ghee',variant:'0',quantity:60},{product:'ghee',variant:'0',quantity:60},{product:'ghee',variant:'1',quantity:'8'}],products),[{product:'ghee',variant:'0',quantity:99}]);});
+test('WhatsApp encoding preserves Unicode and multiline data',()=>{const text=orderMessage(cart,products,{...customer,name:'संतोष',note:'Hare Krishna & pickup?'},config);assert.equal(new URL('https://wa.me/'+config.whatsapp+'?text='+encodeURIComponent(text)).searchParams.get('text'),text);});
+test('catalog has unique IDs and valid prices',()=>{assert.equal(new Set(products.map(p=>p.id)).size,products.length);assert.ok(products.length>=38);for(const p of products){assert.ok(p.variants.length);for(const v of p.variants)assert.ok(Number.isFinite(v.price)&&v.price>0);}});
